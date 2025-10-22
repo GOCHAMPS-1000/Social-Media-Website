@@ -1,0 +1,49 @@
+<!-- social_media/core/templates/core/user_suggestions.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Suggestions - SocialApp</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">SocialApp</div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'post_feed' %}">Feed</a></li>
+                    <li><a href="{% url 'upload_post' %}">Upload</a></li>
+                    <li><a href="{% url 'search_user' %}">Search</a></li>
+                    <li><a href="{% url 'notifications' %}">Notifications</a></li>
+                    <li><a href="{% url 'profile' user.username %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="suggestions-container">
+                <h1>People You May Know</h1>
+                <ul class="users-list">
+                    {% for user in suggestions %}
+                    <li>
+                        <a href="{% url 'profile' user.username %}" class="post-user">{{ user.username }}</a>
+                        <form class="follow-form" data-username="{{ user.username }}" data-following="false">
+                            {% csrf_token %}
+                            <button type="submit" class="btn follow-btn">Follow</button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li>No suggestions at this time.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

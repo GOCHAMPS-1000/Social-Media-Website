@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile_user.username }} - SocialApp</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">SocialApp</div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'post_feed' %}">Feed</a></li>
+                    <li><a href="{% url 'upload_post' %}">Upload</a></li>
+                    <li><a href="{% url 'search_user' %}">Search</a></li>
+                    <li><a href="{% url 'notifications' %}">Notifications</a></li>
+                    <li><a href="{% url 'profile' user.username %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="profile-header">
+                <div class="profile-user">
+                    <h1>{{ profile_user.username }}</h1>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <span class="post-count">{{ post_count }}</span> posts
+                    </div>
+                    <div class="profile-stat">
+                        <span class="follower-count">{{ follower_count }}</span> followers
+                    </div>
+                    <div class="profile-stat">
+                        <span>{{ following_count }}</span> following
+                    </div>
+                </div>
+                
+                {% if user != profile_user %}
+                <form class="follow-form" data-username="{{ profile_user.username }}" data-following="{{ is_following|lower }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn follow-btn">
+                        {% if is_following %}Unfollow{% else %}Follow{% endif %}
+                    </button>
+                </form>
+                {% else %}
+                <a href="{% url 'account_settings' %}" class="btn">Edit Profile</a>
+                {% endif %}
+            </div>
+            
+            <div class="posts-container">
+                {% for post in posts %}
+                <div class="post">
+                    <div class="post-header">
+                        <a href="{% url 'profile' post.user.username %}" class="post-user">{{ post.user.username }}</a>
+                        <span class="post-time">{{ post.created_at|timesince }} ago</span>
+                    </div>
+                    
+                    <div class="post-content">
+                        <p>{{ post.content }}</p>
+                    </div>
+                    
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+                    {% endif %}
+                    
+                    <div class="post-actions">
+                        <form class="like-form" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <button type="submit" class="like-btn">
+                                {% if request.user in post.like_set.all %}Unlike{% else %}Like{% endif %}
+                            </button>
+                            <span class="like-count">{{ post.like_set.count }}</span>
+                        </form>
+                        
+                        <button class="comment-btn">Comment</button>
+                    </div>
+                    
+                    <div class="comments-section">
+                        <ul class="comments-list">
+                            {% for comment in post.comments.all %}
+                            <li>
+                                <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                                <small>{{ comment.created_at|timesince }} ago</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <form class="comment-form" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <input type="text" class="comment-input" placeholder="Write a comment...">
+                            <button type="submit" class="btn">Post</button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No posts yet.</p>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

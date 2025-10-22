@@ -1,0 +1,49 @@
+<!-- social_media/core/templates/core/notifications.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - SocialApp</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">SocialApp</div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'post_feed' %}">Feed</a></li>
+                    <li><a href="{% url 'upload_post' %}">Upload</a></li>
+                    <li><a href="{% url 'search_user' %}">Search</a></li>
+                    <li><a href="{% url 'notifications' %}">Notifications</a></li>
+                    <li><a href="{% url 'profile' user.username %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h1>Notifications</h1>
+            <div class="notifications-container">
+                <ul class="notifications-list">
+                    {% for notification in notifications %}
+                    <li class="{% if not notification.is_read %}notification-unread{% endif %}">
+                        <p>{{ notification.message }}</p>
+                        <small>{{ notification.created_at|timesince }} ago</small>
+                        {% if not notification.is_read %}
+                        <a href="{% url 'mark_as_read' notification.id %}" class="mark-read-btn">Mark as read</a>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li>No notifications yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

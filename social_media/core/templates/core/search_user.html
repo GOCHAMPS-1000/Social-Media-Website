@@ -1,0 +1,59 @@
+<!-- social_media/core/templates/core/search_user.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Users - SocialApp</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">SocialApp</div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'post_feed' %}">Feed</a></li>
+                    <li><a href="{% url 'upload_post' %}">Upload</a></li>
+                    <li><a href="{% url 'search_user' %}">Search</a></li>
+                    <li><a href="{% url 'notifications' %}">Notifications</a></li>
+                    <li><a href="{% url 'profile' user.username %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="search-container">
+                <h1>Search Users</h1>
+                <form method="get" class="search-form">
+                    <input type="text" name="q" class="search-input" placeholder="Search by username..." value="{{ query }}">
+                    <button type="submit" class="btn">Search</button>
+                </form>
+
+                {% if query %}
+                <h2>Search Results for "{{ query }}"</h2>
+                <ul class="users-list">
+                    {% for user in users %}
+                    <li>
+                        <a href="{% url 'profile' user.username %}" class="post-user">{{ user.username }}</a>
+                        <form class="follow-form" data-username="{{ user.username }}" data-following="{% if user in request.user.following.all %}true{% else %}false{% endif %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn follow-btn">
+                                {% if user in request.user.following.all %}Unfollow{% else %}Follow{% endif %}
+                            </button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li>No users found.</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
