@@ -1,6 +1,9 @@
 # social_media/social_media/settings.py
 import os
+import time
 from pathlib import Path
+
+STATIC_VERSION = str(int(time.time()))
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -53,7 +56,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'social_media_db',
         'USER': 'root',
-        'PASSWORD': 'GoVerma@1000',
+        'PASSWORD': '*********',
         'HOST': 'localhost',
         'PORT': '3306',
     }
